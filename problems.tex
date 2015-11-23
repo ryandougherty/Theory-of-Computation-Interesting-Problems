@@ -16,9 +16,43 @@
 
 \par If all $w \in L^*$ have lengths such that their $\gcd$ is $m$, we can just divide all string lengths by $m$ (and using the above argument repeatedly). $L^*$ now is the concatenation of some finite language and $L_3 = \{w \in (0^m)^* \colon |w| > m^2 \times [(\frac{x}{m}-1)(\frac{y}{m}-1) -1]\}$. Again, we are removing a finite number of words from $(0^m)^*$ to get $L_3$, so it is regular. 
 
-\section{Context-Free Grammars}
+\section{NP-completeness}
 
-\section{Turing Machines}
+\item Show that 4COLOR and 3COLOR are poly-time reducible to each other.
+
+\par\textbf{Solution:} the $\Leftarrow$ direction is easy. On input $\langle G = (V, E) \rangle$, construct a new graph $G' = (V' = V \cup \{y\}, E')$ where $y \notin V$ and $E' = E \cup \{(v, y) \colon v \in V\}$ (i.e., add a new vertex and have every other vertex have an edge to it). 4COLOR is in NP because the certificate is the list of nodes and colors. If $G$ is 3-colorable, then $G'$ can be 4-colored in the same way, except with $y$ as the 4th color. If $G'$ is 4-colorable, then $y$ is the only node of the 4th color because it is connected to every other vertex. Therefore, $G$ is 3-colorable.
+
+\par The $\Rightarrow$ direction is a little more tricky. Suppose wlog that the 4-coloring is $\{0, 1, 2, 3\}$ and the 3-coloring is $\{0, 1, 2\}$. For any graph $G = (V, E)$, we construct a new graph $H = (X, F)$:
+\begin{itemize}
+\item $H$ has a ``ground vertex" $x \in X$.
+\item For all $v \in V$, create a ``vertex gadget" as follows:
+\begin{itemize}
+\item It consists of vertices $v^+, v^-$
+\item Construct edges $(v^+, x), (v^-, x)$, but not $(v^+, v^-)$.
+\end{itemize}
+\item For all $e \in E$, create an ``edge gadget" as follows:
+\begin{itemize}
+\item It consists of 7 vertices: $a^+, b^+, c^+, a^-, b^-, c^-, d$. 
+\item Create the following edges (the $\rightarrow$ means an edge to the following vertices, for simplicity):
+\begin{itemize}
+\item $x \rightarrow v^+, v^-, u^+, u^-, d$
+\item $u^+ \rightarrow a^+, x$
+\item $u^- \rightarrow a^-, x$
+\item $a^+ \rightarrow b^+, c^+, u^+$
+\item $a^- \rightarrow b^-, c^-, u^-$
+\item $c^+ \rightarrow a^+, b^+, d, c^-$
+\item $c^- \rightarrow a^-, b^-, d, c^+$
+\item $d \rightarrow x, c^+, c^-$
+\item $b^+ \rightarrow a^+, c^+, v^+$
+\item $b^- \rightarrow a^-, c^-, v^-$
+\item $v^+ \rightarrow b^+, x$
+\item $v^- \rightarrow b^-, x$.
+\end{itemize}
+\end{itemize}
+\end{itemize}
+We claim that $G$ is 4-colorable if and only if $H$ is 3-colorable. If $H$ is 3-colorable, then any 2 vertex gadgets that are connected by an edge have different states. If $u^+, v^+$ have the same color, then $c^+$ is the same color. This implies that $d$ is colored 0 or 1, so either $c^+, c^-$ has the same color of $x$. This implies that either $v^+, u^+$ are not the same color, or $v^-, u^-$ are not. This means we have a proper 4-coloring of $G$.
+
+\par If $G$ is 4-colorable, then for all $u \in V$, we give either the 0 or 1 color to the corresponding vertices in $H$ such that $u$'s color is $2 \times u^+$'s color plus $u^-$'s color. Therefore, each edge gadget has a valid 3-coloring; the reasoning is that 3 of $\{u^+, u^-, v^+, v^-\}$ are the same color, or 2 are the color 0 and the other 2 are the color 1. Therefore, we have a proper 3-coloring of $H$.
 
 \end{enumerate}
 \end{document}

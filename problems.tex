@@ -1,5 +1,8 @@
 \documentclass[10pt]{article}
 \usepackage[margin=1in]{geometry}
+\usepackage{amsmath}
+\usepackage{amssymb}
+
 \title{Interesting Problems}
 \author{Ryan Dougherty}
 \date{}
@@ -15,6 +18,28 @@
 \par\textbf{Solution:} consider $x = 0^a, y = 0^b$ with $\gcd(a, b) = 1$ (i.e., do not share any prime factors). With different combinations of uses of $a, b$, we can get any number larger than $(a-1)(b-1) - 1$. Therefore, $L^*$ is a union of a finite language (the combinations of $a, b$ that are less than $(a-1)(b-1)-1$), and $L_2 = \{w \colon |w| > (a-1)(b-1)-1\}$. $L_2$ is regular because it is just $\Sigma^*$ with a finite number of strings removed. Since $L^*$ is a union of regular languages, it is regular. 
 
 \par If all $w \in L^*$ have lengths such that their $\gcd$ is $m$, we can just divide all string lengths by $m$ (and using the above argument repeatedly). $L^*$ now is the concatenation of some finite language and $L_3 = \{w \in (0^m)^* \colon |w| > m^2 \times [(\frac{x}{m}-1)(\frac{y}{m}-1) -1]\}$. Again, we are removing a finite number of words from $(0^m)^*$ to get $L_3$, so it is regular. 
+
+\item Prove: the language of the lengths of words in any regular language is regular.
+
+\par Proof: first consider a DFA with a unary alphabet, and label the states according to the number of transitions away from the start state (i.e. the start state is labeled 0, the next state (there can be only one, since the alphabet is unary) is 1, etc.). There are two cases - either there is no cycle, or there is one. 
+
+\begin{enumerate}
+\item If there is no cycle, then the language recognized by this DFA is finite, and therefore regular - and the set of the lengths of the words accepted by the DFA is regular.
+
+\item Now consider the second case, in that there is a cycle. Since the alphabet is unary, there can be at most one cycle. Let the state that has an incoming transition be state $k$, and the cycle path is of length $j$. Therefore, not including state $k$, the cycle consists of the states $k+1, k+2, ..., k+j-2, k+j-1$, and then state $k+j-1$ has a transition back to state $k$.
+
+\par Let $L$ be the language accepted by this DFA, $F_{before}$ be the set of accept states (the labelled numbers on the states) before the cycle (i.e. of the states $0, 1, ..., k-1, k$), and $F_{cycle}$ be the set of accept states inside the cycle (i.e. of the states $k+1, k+2, ..., k+j-2, k+j-1$). Therefore, the lengths of the words accepted by the DFA are of the form:
+\begin{center}
+$F_{before} \cup \{f_{cycle} + nj : f_{cycle} \in F_{cycle}, n \in \mathbb{N}\}$
+\end{center}
+\par Clearly the $F_{before}$ part is justified. The second half deals with any integer number of times taken through the cycle - with the start state, traverse $f_{cycle}$ steps (which is state $f_{cycle}$, which is in the cycle), and loop through the cycle any nonnegative integer ($n$) of times, which will always be the state $f_{cycle}$, which clearly is in $F_{cycle}$. Therefore, we are justified in this construction. We can now construct another DFA that recognizes words (a subset of $1^*$) of length of the words inside this set. It is obviously of the form $L_{before} \cup L_{cycle}$, where:
+\begin{center}
+$L_{before} = \{1^{f_{before}} : f_{before} \in F_{before}\}, L_{cycle} = \{1^{f_{cycle}} : f_{cycle} \in F_{cycle}\}(\{1^{j}\})^*$
+\end{center}
+\par Since $F_{before}$ is finite, $L_{before}$ is finite, and therefore regular. Since $F_{cycle}$ is finite, and regular languages are closed under kleene star and concatenation (and $\{1^j\}$ is finite and therefore regular), $L_{cycle}$ is regular. Since regular languages are closed under union, $L_{before} \cup L_{cycle}$ is regular. Therefore, if $L$ is a regular language with a unary alphabet, $length(L)$ is regular.
+\end{enumerate}
+
+\par Now back to the original problem: let $D =(Q_D, \Sigma, \delta_D, q_{D}, F_D)$ be a DFA. We can then choose an $s \in \Sigma$ by constructing another DFA $S = (Q_S, \{s\}, \delta_S, q_{S}, F_S)$ such that $L(S) = \{s^*\}$. We now construct a DFA $N = (Q_N, \{s\}, \delta_N, q_{N}, F_N)$ such that $L(N) = L(D) \cap L(S)$. Therefore, $L(N)$'s language is unary, and is regular by use of the closure properties. Using the above construction and analysis, we can see that $length(L(N))$ is regular. Since $length(L(D)) = length(L(N))$ (the equality holds because $length(L(S)) = 1^*$, so $length(L(D)) \cap length(L(S)) = length(L(D))$), then $length(L(D))$ is regular. Therefore, we can conclude that if $L$ is regular, then $length(L)$ is also regular.
 
 \section{NP-completeness}
 
